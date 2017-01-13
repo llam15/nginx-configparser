@@ -152,6 +152,7 @@ bool NginxConfigParser::Parse(std::istream* config_file, NginxConfig* config) {
   config_stack.push(config);
   TokenType last_token_type = TOKEN_TYPE_START;
   TokenType token_type;
+  int depth = 0;
   while (true) {
     std::string token;
     token_type = ParseToken(config_file, &token);
@@ -190,6 +191,7 @@ bool NginxConfigParser::Parse(std::istream* config_file, NginxConfig* config) {
         break;
       }
     } else if (token_type == TOKEN_TYPE_START_BLOCK) {
+      depth++;
       if (last_token_type != TOKEN_TYPE_NORMAL) {
         // Error.
         break;
@@ -199,7 +201,9 @@ bool NginxConfigParser::Parse(std::istream* config_file, NginxConfig* config) {
           new_config);
       config_stack.push(new_config);
     } else if (token_type == TOKEN_TYPE_END_BLOCK) {
-      if (last_token_type != TOKEN_TYPE_STATEMENT_END) {
+      depth--;
+      if (last_token_type != TOKEN_TYPE_STATEMENT_END &&
+          last_token_type != TOKEN_TYPE_END_BLOCK) {
         // Error.
         break;
       }
@@ -208,6 +212,11 @@ bool NginxConfigParser::Parse(std::istream* config_file, NginxConfig* config) {
       if (last_token_type != TOKEN_TYPE_STATEMENT_END &&
           last_token_type != TOKEN_TYPE_END_BLOCK) {
         // Error.
+        break;
+      }
+      if (depth != 0) {
+        // Mismatched braces
+        printf("Mismached Braces. Depth: %d\n", depth);
         break;
       }
       return true;
