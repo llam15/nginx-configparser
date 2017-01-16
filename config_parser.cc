@@ -216,7 +216,7 @@ bool NginxConfigParser::Parse(std::istream* config_file, NginxConfig* config) {
       }
       if (depth != 0) {
         // Mismatched braces
-        printf("Mismached Braces. Depth: %d\n", depth);
+        printf("Mismatched Braces. Depth: %d\n", depth);
         break;
       }
       return true;

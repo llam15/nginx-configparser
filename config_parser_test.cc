@@ -34,7 +34,7 @@ protected:
 TEST_F(NginxStringConfigTest, AnotherSimpleConfig) {
 	EXPECT_TRUE(ParseString("foo bar;"));
 	EXPECT_EQ(1, out_config_.statements_.size());
-	EXPECT_EQ("foo", out_config_.statements_.at(0)->tokens_.at(0));
+	EXPECT_EQ("foo", out_config_.statements_[0]->tokens_[0]);
 }
 
 // "foo bar" with test fixture
